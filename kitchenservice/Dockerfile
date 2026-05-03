@@ -1,13 +1,13 @@
-# Start with a lightweight Java environment
-FROM eclipse-temurin:26-noble
-# Create our working directory
+# STAGE 1: Build
+FROM maven:3.9-eclipse-temurin-26 AS build
 WORKDIR /app
+COPY pom.xml .
+COPY src ./src
+RUN mvn clean package -DskipTests
 
-# Copy the compiled .jar file
-COPY target/*.jar app.jar
-
-# Expose port 8081
+# STAGE 2: Run
+FROM eclipse-temurin:26-jre-alpine
+WORKDIR /app
+COPY --from=build /app/target/*.jar app.jar
 EXPOSE 8081
-
-# Run the application
 ENTRYPOINT ["java", "-jar", "app.jar"]

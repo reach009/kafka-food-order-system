@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kafka Food - Live Ordering</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+
+<div class="page-wrapper">
+    <div class="controls-container">
+        <h2>🍕 Quick Bites</h2>
+
+        <div class="section">
+            <h3>Place a New Order</h3>
+            <input type="text" id="customerName" placeholder="What's your name?" required>
+            <input type="text" id="foodItem" placeholder="What are you craving? (e.g. Pepperoni Pizza)" required>
+            <button onclick="placeOrder()">Place Order</button>
+        </div>
+
+        <div class="section">
+            <h3>Ready to Pickup?</h3>
+            <input type="number" id="pickupOrderId" placeholder="Enter Order ID" required>
+            <button class="pickup-btn" onclick="pickupOrder()">Confirm Pickup</button>
+        </div>
+
+        <div id="messageBox"></div>
+    </div>
+
+    <div class="dashboard-container">
+        <div class="dashboard-header">
+            <h2 style="color: white; font-size: 20px;">Kitchen Board</h2>
+            <div class="live-indicator">
+                <div class="dot"></div>
+                Live
+            </div>
+        </div>
+        <div id="dashboardList">
+            <div class="empty-state">Connecting to kitchen...</div>
+        </div>
+    </div>
+</div>
+
+<script src="/js/app.js"></script>
+
+</body>
+</html>

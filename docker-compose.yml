@@ -1,0 +1,58 @@
+version: '3.8'
+
+services:
+  # 1. The Database
+  mysql-db:
+    image: mysql:8.0
+    container_name: food_mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root # Keep this secure and separate
+      MYSQL_DATABASE: food_orders
+      # --- NEW: Create a dedicated non-root user ---
+      MYSQL_USER: reach
+      MYSQL_PASSWORD: 4TkZia9[4u?YT!'
+    ports:
+      - "3306:3306"
+
+  # 2. The Message Broker
+  broker:
+    image: apache/kafka:latest
+    container_name: food_kafka
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093
+      # Note: Advertised listener is now 'broker' so the containers can find it!
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://broker:9092
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@localhost:9093
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+
+  # 3. Your Order Service
+  order-app:
+    build: ./order-service
+    container_name: order_service
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysql-db
+      - broker
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/food_orders
+      # --- NEW: Tell Spring Boot to use the non-root user ---
+      - SPRING_DATASOURCE_USERNAME=reach
+      - SPRING_DATASOURCE_PASSWORD=4TkZia9[4u?YT!'
+      - SPRING_KAFKA_BOOTSTRAP_SERVERS=broker:9092
+
+  # 4. Your Kitchen Service
+  kitchen-app:
+    build: ./kitchen-service # Looks for the Dockerfile in the kitchen-service folder
+    container_name: kitchen_service
+    depends_on:
+      - broker
+    environment:
+      # Overrides the application.properties to point to the Docker Kafka
+      - SPRING_KAFKA_BOOTSTRAP_SERVERS=broker:9092

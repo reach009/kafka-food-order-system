@@ -1,0 +1,22 @@
+# IDE Settings
+.idea/
+*.iml
+*.iws
+*.ipr
+.vscode/
+
+# Build artifacts
+**/target/
+**/build/
+**/bin/
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# Environment Files
+**/.env
+**/application.properties
+**/mvnw
+**/mvnw.cmd
+**/.mvn/

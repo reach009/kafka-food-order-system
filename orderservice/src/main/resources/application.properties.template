@@ -1,0 +1,22 @@
+spring.application.name=order
+
+# MySQL Database Configuration
+# Use environment variables: DB_URL, DB_USERNAME, DB_PASSWORD
+spring.datasource.url=${DB_URL:jdbc:mysql://localhost:3306/food_orders?createDatabaseIfNotExist=true}
+spring.datasource.username=${DB_USERNAME:root}
+spring.datasource.password=${DB_PASSWORD:}
+spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+
+# Kafka Configuration
+spring.kafka.bootstrap-servers=${KAFKA_SERVERS:localhost:9092}
+spring.kafka.consumer.group-id=order-service-group
+spring.kafka.consumer.auto-offset-reset=earliest
+
+# Kafka Serialization
+spring.kafka.producer.key-serializer=org.apache.kafka.common.serialization.StringSerializer
+spring.kafka.producer.value-serializer=org.apache.kafka.common.serialization.StringSerializer
+spring.kafka.consumer.key-deserializer=org.apache.kafka.common.serialization.StringDeserializer
+spring.kafka.consumer.value-deserializer=org.apache.kafka.common.serialization.StringDeserializer

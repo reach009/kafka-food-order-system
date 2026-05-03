@@ -28,7 +28,7 @@ The system consists of two independent microservices communicating asynchronousl
 * **Containerized:** Fully deployable using Docker and Docker Compose.
 
 ## 🛠 Tech Stack
-* **Backend:** Java 21, Spring Boot, Spring Data JPA, Spring Kafka
+* **Backend:** Java 26, Spring Boot, Spring Data JPA, Spring Kafka
 * **Frontend:** HTML5, CSS3, Vanilla JavaScript (EventSource API)
 * **Database:** MySQL 8.0
 * **Infrastructure:** Apache Kafka, Docker, Docker Compose

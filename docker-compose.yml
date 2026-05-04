@@ -10,7 +10,7 @@ services:
       MYSQL_DATABASE: food_orders
       # --- NEW: Create a dedicated non-root user ---
       MYSQL_USER: reach
-      MYSQL_PASSWORD: 4TkZia9[4u?YT!'
+      MYSQL_PASSWORD: reachsecurepassword123
     ports:
       - "3306:3306"
 
@@ -44,7 +44,7 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/food_orders
       # --- NEW: Tell Spring Boot to use the non-root user ---
       - SPRING_DATASOURCE_USERNAME=reach
-      - SPRING_DATASOURCE_PASSWORD=4TkZia9[4u?YT!'
+      - SPRING_DATASOURCE_PASSWORD=reachsecurepassword123
       - SPRING_KAFKA_BOOTSTRAP_SERVERS=broker:9092
 
   # 4. Your Kitchen Service

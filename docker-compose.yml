@@ -1,28 +1,23 @@
-version: '3.8'
-
 services:
   # 1. The Database
   mysql-db:
     image: mysql:8.0
     container_name: food_mysql
     environment:
-      MYSQL_ROOT_PASSWORD: root # Keep this secure and separate
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
       MYSQL_DATABASE: food_orders
-      # --- NEW: Create a dedicated non-root user ---
-      MYSQL_USER: reach
-      MYSQL_PASSWORD: reachsecurepassword123
-    ports:
-      - "3306:3306"
+      MYSQL_USER: ${DB_APP_USER}
+      MYSQL_PASSWORD: ${DB_APP_PASSWORD}
+    # REMOVED: ports 3306:3306 (Secure internal access only)
 
   # 2. The Message Broker
   broker:
-    image: apache/kafka:latest
+    image: apache/kafka:latest # Consider pinning this to a specific version later
     container_name: food_kafka
     environment:
       KAFKA_NODE_ID: 1
       KAFKA_PROCESS_ROLES: broker,controller
       KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093
-      # Note: Advertised listener is now 'broker' so the containers can find it!
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://broker:9092
       KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
@@ -36,24 +31,22 @@ services:
     build: ./order-service
     container_name: order_service
     ports:
-      - "7000:8080"
+      - "7000:8080" # This is the only port the outside world can see!
     depends_on:
       - mysql-db
       - broker
     environment:
       - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/food_orders
-      # --- NEW: Tell Spring Boot to use the non-root user ---
-      - SPRING_DATASOURCE_USERNAME=reach
-      - SPRING_DATASOURCE_PASSWORD=reachsecurepassword123
+      - SPRING_DATASOURCE_USERNAME=${DB_APP_USER}
+      - SPRING_DATASOURCE_PASSWORD=${DB_APP_PASSWORD}
       - SPRING_KAFKA_BOOTSTRAP_SERVERS=broker:9092
-      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=validate # Changed from 'update' for safety
 
   # 4. Your Kitchen Service
   kitchen-app:
-    build: ./kitchen-service # Looks for the Dockerfile in the kitchen-service folder
+    build: ./kitchen-service
     container_name: kitchen_service
     depends_on:
       - broker
     environment:
-      # Overrides the application.properties to point to the Docker Kafka
       - SPRING_KAFKA_BOOTSTRAP_SERVERS=broker:9092

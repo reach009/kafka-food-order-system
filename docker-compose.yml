@@ -40,7 +40,7 @@ services:
       - SPRING_DATASOURCE_USERNAME=${DB_APP_USER}
       - SPRING_DATASOURCE_PASSWORD=${DB_APP_PASSWORD}
       - SPRING_KAFKA_BOOTSTRAP_SERVERS=broker:9092
-      - SPRING_JPA_HIBERNATE_DDL_AUTO=validate # Changed from 'update' for safety
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
 
   # 4. Your Kitchen Service
   kitchen-app:
